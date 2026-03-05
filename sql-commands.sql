@@ -1,0 +1,146 @@
+PRAGMA foreign_keys = off;
+BEGIN TRANSACTION;
+
+-- Table: ConstructionLocation
+CREATE TABLE ConstructionLocation (
+    ConstructionLocationID INTEGER PRIMARY KEY,
+    Type                   TEXT    NOT NULL,
+    Location               TEXT    NOT NULL
+);
+
+
+-- Table: ConstructionSchedule
+CREATE TABLE ConstructionSchedule (
+    ConstructionScheduleID INTEGER PRIMARY KEY,
+    ConstructionLocationID INTEGER REFERENCES ConstructionLocation (ConstructionLocationID) 
+                                   UNIQUE
+                                   NOT NULL,
+    Duration               INTEGER NOT NULL,
+    Description            TEXT
+);
+
+
+-- Table: ConstructionWorker
+CREATE TABLE ConstructionWorker (
+    EmployeeID INTEGER REFERENCES Employee (EmployeeID) 
+                       PRIMARY KEY,
+    Job        TEXT    NOT NULL
+);
+
+
+-- Table: ConstructionWorker_Builds_ConstructionSchedule
+CREATE TABLE ConstructionWorker_Builds_ConstructionSchedule (
+    EmployeeID             INTEGER REFERENCES ConstructionWorker (EmployeeID) 
+                                   UNIQUE
+                                   NOT NULL,
+    ConstructionScheduleID INTEGER REFERENCES ConstructionSchedule (ConstructionScheduleID) 
+                                   UNIQUE
+                                   NOT NULL
+);
+
+
+-- Table: Driver
+CREATE TABLE Driver (
+    EmployeeID INTEGER REFERENCES Employee (EmployeeID) 
+                     PRIMARY KEY
+);
+
+
+-- Table: Employee
+CREATE TABLE Employee (
+    EmployeeID INTEGER PRIMARY KEY,
+    Name       TEXT    NOT NULL,
+    Age        INTEGER NOT NULL,
+    StartDate  INTEGER NOT NULL
+);
+
+
+-- Table: Manufacturer
+CREATE TABLE Manufacturer (
+    ManufacturerID INTEGER PRIMARY KEY,
+    CompanyName    TEXT    NOT NULL
+);
+
+
+-- Table: OfficeWorker
+CREATE TABLE OfficeWorker (
+    EmployeeID INTEGER REFERENCES Employee (EmployeeID) 
+                     PRIMARY KEY
+);
+
+
+-- Table: OfficeWorkspaceChair
+CREATE TABLE OfficeWorkspaceChair (
+    OfficeWorkspaceChairID INTEGER PRIMARY KEY,
+    FloorLevel             INTEGER NOT NULL
+);
+
+
+-- Table: OfficeWorkspaceSchedule
+CREATE TABLE OfficeWorkspaceSchedule (
+    OfficeWorkspaceScheduleID INTEGER PRIMARY KEY,
+    OfficeWorkspaceChairID    INTEGER REFERENCES OfficeWorkspaceChair (OfficeWorkspaceChairID) 
+                                      UNIQUE
+                                      NOT NULL,
+    EmployeeID                INTEGER NOT NULL
+                                      UNIQUE
+                                      REFERENCES OfficeWorker (EmployeeID),
+    Duration                  INTEGER NOT NULL
+);
+
+
+-- Table: Order
+CREATE TABLE [Order] (
+    OrderID                INTEGER PRIMARY KEY,
+    EmployeeID             INTEGER REFERENCES Employee (EmployeeID) 
+                                   UNIQUE
+                                   NOT NULL,
+    ConstructionScheduleID INTEGER REFERENCES ConstructionSchedule (ConstructionScheduleID) 
+                                   UNIQUE
+                                   NOT NULL,
+    Date                   TEXT    NOT NULL,
+    Price                  INTEGER NOT NULL,
+    Delivered              INTEGER NOT NULL
+);
+
+
+-- Table: SingleMaterialProduct
+CREATE TABLE SingleMaterialProduct (
+    SingleMaterialProductID INTEGER PRIMARY KEY,
+    ManufactuerID           INTEGER REFERENCES Manufacturer (ManufacturerID) 
+                                    UNIQUE
+                                    NOT NULL,
+    OrderID                 INTEGER REFERENCES [Order] (OrderID) 
+                                    UNIQUE
+                                    NOT NULL,
+    MaterialType            TEXT    NOT NULL,
+    BrandName               TEXT    NOT NULL
+);
+
+
+-- Table: Vehicle
+CREATE TABLE Vehicle (
+    VehicleID INTEGER PRIMARY KEY,
+    Type      TEXT    NOT NULL
+);
+
+
+-- Table: VehicleSchedule
+CREATE TABLE VehicleSchedule (
+    VehicleScheduleID      INTEGER PRIMARY KEY,
+    ConstructionScheduleID INTEGER REFERENCES ConstructionSchedule (ConstructionScheduleID) 
+                                   UNIQUE
+                                   NOT NULL,
+    EmployeeID             INTEGER REFERENCES Driver (EmployeeID) 
+                                   UNIQUE
+                                   NOT NULL,
+    VehicleID              INTEGER UNIQUE
+                                   REFERENCES Vehicle (VehicleID) 
+                                   NOT NULL,
+    StartDate              INTEGER NOT NULL,
+    EndDate                INTEGER NOT NULL
+);
+
+
+COMMIT TRANSACTION;
+PRAGMA foreign_keys = on;
