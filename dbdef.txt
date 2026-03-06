@@ -1,15 +1,9 @@
-PRAGMA foreign_keys = off;
-BEGIN TRANSACTION;
-
--- Table: ConstructionLocation
 CREATE TABLE ConstructionLocation (
     ConstructionLocationID INTEGER PRIMARY KEY,
     Type                   TEXT    NOT NULL,
     Location               TEXT    NOT NULL
 );
 
-
--- Table: ConstructionSchedule
 CREATE TABLE ConstructionSchedule (
     ConstructionScheduleID INTEGER PRIMARY KEY,
     ConstructionLocationID INTEGER REFERENCES ConstructionLocation (ConstructionLocationID) 
@@ -19,16 +13,12 @@ CREATE TABLE ConstructionSchedule (
     Description            TEXT
 );
 
-
--- Table: ConstructionWorker
 CREATE TABLE ConstructionWorker (
     EmployeeID INTEGER REFERENCES Employee (EmployeeID) 
                        PRIMARY KEY,
     Job        TEXT    NOT NULL
 );
 
-
--- Table: ConstructionWorker_Builds_ConstructionSchedule
 CREATE TABLE ConstructionWorker_Builds_ConstructionSchedule (
     EmployeeID             INTEGER REFERENCES ConstructionWorker (EmployeeID) 
                                    UNIQUE
@@ -38,15 +28,11 @@ CREATE TABLE ConstructionWorker_Builds_ConstructionSchedule (
                                    NOT NULL
 );
 
-
--- Table: Driver
 CREATE TABLE Driver (
     EmployeeID INTEGER REFERENCES Employee (EmployeeID) 
                      PRIMARY KEY
 );
 
-
--- Table: Employee
 CREATE TABLE Employee (
     EmployeeID INTEGER PRIMARY KEY,
     Name       TEXT    NOT NULL,
@@ -54,29 +40,21 @@ CREATE TABLE Employee (
     StartDate  INTEGER NOT NULL
 );
 
-
--- Table: Manufacturer
 CREATE TABLE Manufacturer (
     ManufacturerID INTEGER PRIMARY KEY,
     CompanyName    TEXT    NOT NULL
 );
 
-
--- Table: OfficeWorker
 CREATE TABLE OfficeWorker (
     EmployeeID INTEGER REFERENCES Employee (EmployeeID) 
                      PRIMARY KEY
 );
 
-
--- Table: OfficeWorkspaceChair
 CREATE TABLE OfficeWorkspaceChair (
     OfficeWorkspaceChairID INTEGER PRIMARY KEY,
     FloorLevel             INTEGER NOT NULL
 );
 
-
--- Table: OfficeWorkspaceSchedule
 CREATE TABLE OfficeWorkspaceSchedule (
     OfficeWorkspaceScheduleID INTEGER PRIMARY KEY,
     OfficeWorkspaceChairID    INTEGER REFERENCES OfficeWorkspaceChair (OfficeWorkspaceChairID) 
@@ -88,9 +66,7 @@ CREATE TABLE OfficeWorkspaceSchedule (
     Duration                  INTEGER NOT NULL
 );
 
-
--- Table: Order
-CREATE TABLE [Order] (
+CREATE TABLE "Order" (
     OrderID                INTEGER PRIMARY KEY,
     EmployeeID             INTEGER REFERENCES Employee (EmployeeID) 
                                    UNIQUE
@@ -103,29 +79,23 @@ CREATE TABLE [Order] (
     Delivered              INTEGER NOT NULL
 );
 
-
--- Table: SingleMaterialProduct
 CREATE TABLE SingleMaterialProduct (
     SingleMaterialProductID INTEGER PRIMARY KEY,
     ManufactuerID           INTEGER REFERENCES Manufacturer (ManufacturerID) 
                                     UNIQUE
                                     NOT NULL,
-    OrderID                 INTEGER REFERENCES [Order] (OrderID) 
+    OrderID                 INTEGER REFERENCES "Order" (OrderID) 
                                     UNIQUE
                                     NOT NULL,
     MaterialType            TEXT    NOT NULL,
     BrandName               TEXT    NOT NULL
 );
 
-
--- Table: Vehicle
 CREATE TABLE Vehicle (
     VehicleID INTEGER PRIMARY KEY,
     Type      TEXT    NOT NULL
 );
 
-
--- Table: VehicleSchedule
 CREATE TABLE VehicleSchedule (
     VehicleScheduleID      INTEGER PRIMARY KEY,
     ConstructionScheduleID INTEGER REFERENCES ConstructionSchedule (ConstructionScheduleID) 
@@ -140,7 +110,3 @@ CREATE TABLE VehicleSchedule (
     StartDate              INTEGER NOT NULL,
     EndDate                INTEGER NOT NULL
 );
-
-
-COMMIT TRANSACTION;
-PRAGMA foreign_keys = on;
